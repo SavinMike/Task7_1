@@ -17,15 +17,15 @@ import java.util.*;
  */
 public class GuestBook {
     private ArrayList<String> messages=new ArrayList<>();
-    public static GuestBook init=null;
     private GuestBookController db;
-    public GuestBook(DataSource sources){
+    public  GuestBook(DataSource sources){
         db = new DBController(sources);
         System.out.println("Guest BOOk init");
     };
 
     public synchronized void add(String message)throws IOException,SQLException {
         db.addRecord(message.trim());
+        System.out.println("Add record:"+message);
         messages.add(message);
     }
     public synchronized ArrayList<String> list() throws SQLException{
@@ -36,7 +36,7 @@ public class GuestBook {
         }
         return ms;
     }
-    public void close(){
+    public synchronized void close(){
         try {
             db.close();
         }

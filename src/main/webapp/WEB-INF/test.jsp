@@ -2,6 +2,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <body>
+<h1>${Exception}</h1>
 <form name="form1" method="post" action="simple">
 
    <input name="Rollno" type="text" id="RollNo" size="15" maxlength="256">

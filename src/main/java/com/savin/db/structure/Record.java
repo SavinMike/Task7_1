@@ -8,17 +8,18 @@ import java.util.ArrayList;
 public class Record {
     private Connection conn;
     private Statement st1;
-
+    private static boolean flag=false;
     public Record(DataSource ds) {
         try {
             this.conn = ds.getConnection();
             st1 = conn.createStatement();
-            if (!new File("test.h2.db").exists()) {
-                st1.execute("CREATE TABLE posts(id int NOT NULL AUTO_INCREMENT," +
+
+            if(!flag)
+               st1.execute("CREATE TABLE posts(id int NOT NULL AUTO_INCREMENT," +
                         "postDate long," +
                         "postMessage varchar(255)," +
                         "PRIMARY KEY (id))\n");
-            }
+            flag=true;
             System.out.println("ready to start");
 
         } catch (Exception e) {
@@ -32,6 +33,7 @@ public class Record {
 
     public void addRecord(long date, String postMessage) throws SQLException {
         st1.execute("INSERT INTO posts(postDate,postMessage) VALUES (" + date + ",'" + postMessage + "')");
+        System.out.println("Insert done");
     }
 
     public ArrayList<String> getRecords() throws SQLException {

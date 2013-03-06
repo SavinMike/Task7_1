@@ -19,7 +19,7 @@ public class Hello extends HttpServlet {
 
     private GuestBook guestBook;
     @PostConstruct
-    public void initGuestBook(){
+    public synchronized void initGuestBook(){
         guestBook=new GuestBook(ds);
     }
     @Override
@@ -29,23 +29,23 @@ public class Hello extends HttpServlet {
 
     protected void doGet(HttpServletRequest req,HttpServletResponse response) throws ServletException,IOException {
         try {
-            req.setAttribute("GuestList",guestBook.list());
+            req.setAttribute("GuestList", guestBook.list());
             req.getRequestDispatcher("WEB-INF/test.jsp").forward(req, response);
-
         }
         catch (SQLException e){
             e.printStackTrace();
+            req.setAttribute("Exception","DB problem not add");
         }
     }
     protected void doPost(HttpServletRequest req,HttpServletResponse response) throws ServletException,IOException{
         try {
             guestBook.add(req.getParameter("Rollno"));
             req.setAttribute("GuestList",guestBook.list());
-            req.setAttribute("GuestListSize",guestBook.list().size());
+            req.setAttribute("GuestListSize", guestBook.list().size());
             req.getRequestDispatcher("WEB-INF/test.jsp").forward(req, response);
-
         }
         catch (SQLException e){
+            req.setAttribute("Exception","DB problem not add");
             e.printStackTrace();
         }
 
