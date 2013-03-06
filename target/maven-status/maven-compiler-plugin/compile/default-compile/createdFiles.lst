@@ -1,0 +1,5 @@
+com\savin\task7\Hello.class
+com\savin\db\controller\DBController.class
+com\savin\task7\GuestBook.class
+com\savin\db\structure\Record.class
+com\savin\db\controller\GuestBookController.class
