@@ -20,8 +20,14 @@ public class Hello extends HttpServlet {
     private DataSource ds;
 
     private GuestBook guestBook;
+
+  //  @PostConstruct
+    public synchronized void initGuestBook(){
+        guestBook=new GuestBook(ds);
+    }
     @PostConstruct
-    public void createDB() throws SQLException{
+    public void createDB(){
+        try {
         Connection conn = ds.getConnection();
         Statement statement=conn.createStatement();
         statement.executeUpdate(
@@ -29,10 +35,10 @@ public class Hello extends HttpServlet {
                         "postDate long," +
                         "postMessage varchar(255)," +
                         "PRIMARY KEY (id))\n");
-    }
-    @PostConstruct
-    public synchronized void initGuestBook() throws SQLException{
-        guestBook=new GuestBook(ds);
+        }
+        catch (SQLException e){
+            e.printStackTrace();
+        }
     }
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -41,6 +47,7 @@ public class Hello extends HttpServlet {
 
     protected void doGet(HttpServletRequest req,HttpServletResponse response) throws ServletException,IOException {
         try {
+            initGuestBook();
             req.setAttribute("GuestList", guestBook.list());
             req.getRequestDispatcher("WEB-INF/test.jsp").forward(req, response);
             guestBook.close();
@@ -54,6 +61,7 @@ public class Hello extends HttpServlet {
     }
     protected void doPost(HttpServletRequest req,HttpServletResponse response) throws ServletException,IOException{
         try {
+            initGuestBook();
             guestBook.add(req.getParameter("Rollno"));
             req.setAttribute("GuestList",guestBook.list());
             req.getRequestDispatcher("WEB-INF/test.jsp").forward(req, response);

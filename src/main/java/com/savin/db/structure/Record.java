@@ -10,7 +10,6 @@ import java.util.List;
 public class Record {
     private Connection conn;
     private Statement st1;
-    private static boolean flag=false;
     public Record(DataSource ds) {
         try {
             this.conn = ds.getConnection();
@@ -27,8 +26,10 @@ public class Record {
 
 
     public void addRecord(long date, String postMessage) throws SQLException {
-        String query="INSERT INTO posts(postDate,postMessage) VALUES (" + date + ",'" + postMessage + "')";
+        String query="INSERT INTO posts(postDate,postMessage) " +
+                "VALUES (" + date + ",'" + postMessage.replaceAll("'","''") + "')";
         PreparedStatement statement=conn.prepareStatement(query);
+        statement.executeUpdate();
         System.out.println("Insert done");
     }
 

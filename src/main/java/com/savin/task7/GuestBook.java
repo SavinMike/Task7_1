@@ -8,13 +8,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: BuOs
- * Date: 02.03.13
- * Time: 15:14
- * To change this template use File | Settings | File Templates.
- */
 public class GuestBook {
     private GuestBookController db;
     public  GuestBook(DataSource sources){
@@ -26,8 +19,8 @@ public class GuestBook {
         db.addRecord(message.trim());
         System.out.println("Add record:"+message);
     }
-    public synchronized ArrayList<String> list() throws SQLException{
-        ArrayList<String>ms;
+    public synchronized List<String> list() throws SQLException{
+        List<String>ms;
         ms=db.getRecords();
         return ms;
     }
