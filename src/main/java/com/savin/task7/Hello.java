@@ -9,7 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.sql.DataSource;
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 @WebServlet(name = "SimpleServlet",urlPatterns={"/simple"})
 public class Hello extends HttpServlet {
@@ -19,7 +21,17 @@ public class Hello extends HttpServlet {
 
     private GuestBook guestBook;
     @PostConstruct
-    public synchronized void initGuestBook(){
+    public void createDB() throws SQLException{
+        Connection conn = ds.getConnection();
+        Statement statement=conn.createStatement();
+        statement.executeUpdate(
+                "CREATE TABLE posts(id int NOT NULL AUTO_INCREMENT," +
+                        "postDate long," +
+                        "postMessage varchar(255)," +
+                        "PRIMARY KEY (id))\n");
+    }
+    @PostConstruct
+    public synchronized void initGuestBook() throws SQLException{
         guestBook=new GuestBook(ds);
     }
     @Override
@@ -31,8 +43,11 @@ public class Hello extends HttpServlet {
         try {
             req.setAttribute("GuestList", guestBook.list());
             req.getRequestDispatcher("WEB-INF/test.jsp").forward(req, response);
+            guestBook.close();
+
         }
         catch (SQLException e){
+            guestBook.close();
             e.printStackTrace();
             req.setAttribute("Exception","DB problem not add");
         }
@@ -41,10 +56,11 @@ public class Hello extends HttpServlet {
         try {
             guestBook.add(req.getParameter("Rollno"));
             req.setAttribute("GuestList",guestBook.list());
-            req.setAttribute("GuestListSize", guestBook.list().size());
             req.getRequestDispatcher("WEB-INF/test.jsp").forward(req, response);
+            guestBook.close();
         }
         catch (SQLException e){
+            guestBook.close();
             req.setAttribute("Exception","DB problem not add");
             e.printStackTrace();
         }

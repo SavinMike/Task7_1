@@ -16,7 +16,6 @@ import java.util.*;
  * To change this template use File | Settings | File Templates.
  */
 public class GuestBook {
-    private ArrayList<String> messages=new ArrayList<>();
     private GuestBookController db;
     public  GuestBook(DataSource sources){
         db = new DBController(sources);
@@ -26,14 +25,10 @@ public class GuestBook {
     public synchronized void add(String message)throws IOException,SQLException {
         db.addRecord(message.trim());
         System.out.println("Add record:"+message);
-        messages.add(message);
     }
     public synchronized ArrayList<String> list() throws SQLException{
-        ArrayList<String>ms=new ArrayList<>();
-        if(!db.getRecords().isEmpty()){
-            ms=db.getRecords();
-            Collections.reverse(ms);
-        }
+        ArrayList<String>ms;
+        ms=db.getRecords();
         return ms;
     }
     public synchronized void close(){

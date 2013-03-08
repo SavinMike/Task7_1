@@ -4,6 +4,8 @@ import javax.sql.DataSource;
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Record {
     private Connection conn;
@@ -13,13 +15,6 @@ public class Record {
         try {
             this.conn = ds.getConnection();
             st1 = conn.createStatement();
-
-            if(!flag)
-               st1.execute("CREATE TABLE posts(id int NOT NULL AUTO_INCREMENT," +
-                        "postDate long," +
-                        "postMessage varchar(255)," +
-                        "PRIMARY KEY (id))\n");
-            flag=true;
             System.out.println("ready to start");
 
         } catch (Exception e) {
@@ -32,15 +27,19 @@ public class Record {
 
 
     public void addRecord(long date, String postMessage) throws SQLException {
-        st1.execute("INSERT INTO posts(postDate,postMessage) VALUES (" + date + ",'" + postMessage + "')");
+        String query="INSERT INTO posts(postDate,postMessage) VALUES (" + date + ",'" + postMessage + "')";
+        PreparedStatement statement=conn.prepareStatement(query);
         System.out.println("Insert done");
     }
 
-    public ArrayList<String> getRecords() throws SQLException {
+    public List<String> getRecords() throws SQLException {
         ResultSet result;
         ArrayList<String>list=new ArrayList<>();
 
-        result = st1.executeQuery("SELECT * FROM posts");
+        result = st1.executeQuery("SELECT * FROM posts ORDER BY postDate DESC");
+        if(result.wasNull()){
+            return Collections.EMPTY_LIST;
+        }
         while (result.next()) {
             list.add(result.getString("PostMessage"));
 
